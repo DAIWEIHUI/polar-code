@@ -5,14 +5,14 @@ global PCparams;
 addpath('function');
 
 
-N = 256;
-K = 128;
+N = 8;
+K = 3;
 Rc = K/N;
 Rm = 1;%BPSK
-ebn0 = 1:0.5:3;
+ebn0 = 0:2:8;
 ebn0_num = 10.^(ebn0/10);
-SNR = ebn0 + 10*log10(Rc*Rm) + 10*log10(2); %ÊµÊýÐÅºÅ+ 10*log10(2)
-SNR_num = 10.^(SNR/10);
+SNR = ebn0 + 10*log10(Rc*Rm)+10*log10(2);
+noise_sigma = 1./(10.^(SNR/10));
 
 design_snr_dB = 0;%parameter for constucted polar code using BA construction method
 sigma = 0.9;%parameter for constucted polar code using GA construction method
@@ -78,7 +78,8 @@ for j = 1:length(ebn0)
         u=randi(2,1,K)-1; %Bernoulli(0.5);
 		x=pencode(u,F_kron_n);
         tx_waveform=bpsk(x);
-        rx_waveform=awgn(tx_waveform,SNR(j),'measured');
+        noise=sqrt(noise_sigma(j))*randn(1,N);
+        rx_waveform = tx_waveform+noise;
         de_bpsk(rx_waveform>0)=1;
         
         nfails = sum(de_bpsk ~= x);
@@ -86,7 +87,7 @@ for j = 1:length(ebn0)
         bpsk_BER(j) = bpsk_BER(j) + nfails;
         
 	
-        initia_llr = -2*rx_waveform*SNR_num(j);
+        initia_llr = -2*rx_waveform/noise_sigma(j);
 	
         switch decoding_method
             case 0
