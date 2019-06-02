@@ -1,9 +1,8 @@
-function u_hat = polar_SSC_decode(decoder_tree_initial, G, B, LLR)
+function u_llr = polar_SSC_decode(LLR,N,decoder_tree_initial, G, B)
 
 %======================================
 %============遍历树开始===================
-global PCparams;
-n=PCparams.n;
+n = log2(N);
 u_hat = zeros(1,2^(n+1)-1);%初始化译码比特
 
 node_index = 1; %取第一个节点，即根节点
@@ -67,5 +66,10 @@ while decoder_tree{1}{7}~=2
 end
         
      u_hat = u_hat(2^n:end);
+     u_llr = 1-2*u_hat; %假的LLR值
+end
 
+
+function c = fFunction(a,b)
+    c = sign(a).*sign(b).*min(abs(a),abs(b));
 end

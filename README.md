@@ -8,33 +8,22 @@
 
 1. polar码基本原理v1.docx叙述了polar码的基本原理
 
-1. 本程序给出一个主函数示例main,用户输入选择译码算法，以及译码参数
+1. 本程序给出一个主函数示例main, 信道为AWGN信道，用户输入选择译码算法，以及译码参数
 常用参数：
-    - N: 码长，需为2的幂次   
-    - K: 信息位长度
+    - polar_N: 码长，需为2的幂次 
+    - n: $\log_2$(polar_N)  
+    - polar_K: 信息位长度
+    - FZlookup: polar_N长向量，为0表示为frozen bits位置，为-1表示信息比特位置，具体位置由constructedPolarCode中的三种构造函数构造得来（其中FZlookup是Frozen Bits的位置构造的码字针对的是$G= B\times F^{\otimes n}$生成矩阵，而非$G= F^{\otimes n}$ (这两种形式都很常用，但一定要弄清楚)）
     - 码字构造参数: 
-        - design SNR: BA 构造方法的参数值
+        - design SNR: BA和蒙特卡洛仿真构造方法的参数值
         - sigma: GA构造方法的初始值
+    - bitreversedindices: 等效于$G= B\times F^{\otimes n}$中的$B$
     - SC译码时无参数
     - SCL译码时要求输入List大小和CRC校验位数
     - BP译码时要求输入迭代次数，一般为40；
     - SCAN译码要求输入迭代次数，一般为1-4；
-    - SCL的CRC校验生成用了随机校验矩阵的方法，实验结果显示与标准CRC校验性能一致
+    - 如果使用SCL译码算法，并且采用CRC校验，CRC校验多项式在pencode函数和polar_SCL_decode函数中都有。
     - SSC算法为SC算法的简化算法，速度提升明显
-
-
-
-2. initPC是polar码初始化程序，主要构建Polar的数据结构，包括了：
-    - N: 码长
-    - K: 信息位长(code rate $R = \frac{K}{N}$)
-    - n: $\log_2(N)$
-    - FZlookup: $N$长向量，为0表示为frozen bits位置，为-1表示信息比特位置
-    - L: 用于存储运算过程中的左信息值（算法中的L矩阵）
-    - B: 用于存储运算过程中的右信息值（算法中的B矩阵）
-    - bitreversedindices: 等效于$G= B\times F^{\otimes n}$中的$B$
-    - 其中FZlookup是Frozen Bits的位置构造的码字针对的是$G= B\times F^{\otimes n}$生成矩阵，而非$G= F^{\otimes n}$ (这两种形式都很常用，但一定要弄清楚)
-
-    **注意这里没有考虑memory简化，因此大小都为$N\times(n+1)$**
 
 
 3. pencode是编码程序。引入crc校验时，需要将crc校验信息当成是信息的一部分进行编码
@@ -52,7 +41,7 @@
 9. 所有的译码程序的迭代因子图都如下图所示。
 ![image](https://github.com/ZhipengPan/polar-code/blob/master/polar-factor.jpg)
 
-10. constructedCode文件夹下的construct_polar_code_GA函数为高斯近似polar码构造方法，construct_polar_code_Ba为巴氏参数界构造方法。
+10. constructedCode文件夹下的construct_polar_code_GA函数为高斯近似polar码构造方法，construct_polar_code_Ba为巴氏参数界构造方法。construct_polar_code_MC函数为蒙特卡洛仿真构造方法（该方法复杂度较高，构造速度较慢）
 
 ## 仿真结果：
 仿真结果位于result文件夹中

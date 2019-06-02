@@ -1,14 +1,11 @@
-function [u_llr,c_llr] = polar_BP_decode(initialLLRs,BP_ITER_NUM)
+function [u_llr,c_llr] = polar_BP_decode(initialLLRs,N,FZlookup,BP_ITER_NUM)
     
-    global PCparams;
-    n = PCparams.n;
-    N = PCparams.N;
-   
+    n = log2(N);
     L = zeros(N,n+1);
     R = zeros(N,n+1);
     inf_num = 1000;
     L(:,n+1) = initialLLRs';
-    R(PCparams.FZlookup==0,1) = inf_num;
+    R(FZlookup==0,1) = inf_num;
     
     for iter = 1:BP_ITER_NUM
         
@@ -39,7 +36,13 @@ function [u_llr,c_llr] = polar_BP_decode(initialLLRs,BP_ITER_NUM)
         
     end
     
-    %è®¡ç®—æœ?»ˆè¾“å‡ºllr
+    %¼ÆËãÊä³öllr
     u_llr = L(:,1)+R(:,1);
     c_llr = R(:,n+1);
+end
+
+
+
+function c = fFunction(a,b)
+    c = sign(a)*sign(b)*min(abs(a),abs(b));
 end

@@ -1,10 +1,9 @@
-function [decoder_tree_initial, G, B] = intial_tree_G( )
+function [decoder_tree_initial, G, B] = intial_tree_G(N,FZlookup)
 %函数用于生成译码树结构，以及SSC译码时将用到的G矩阵，和B_N矩阵
 %函数在确定采用SSC译码器时调用；
 %=============初始化树=================
-global PCparams;
-n=PCparams.n;
-FZlookup = PCparams.FZlookup;
+
+n=log2(N);
 node = cell(1,7);
 %node{1} = node_type；节点类型，表示0节点1节点及混合节点，分别用0 1 -1表示
 %node{2} = L; 数组，表示L数组
